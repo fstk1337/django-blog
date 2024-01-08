@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
-from .models import Category, Post
+from .models import Category, Post, Comment
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -15,8 +15,15 @@ class CategorySerializer(serializers.ModelSerializer):
 
 class PostSerializer(serializers.ModelSerializer):
     owner = serializers.ReadOnlyField(source='owner.username')
+    comments = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
 
     class Meta:
         model = Post
-        fields = ['id', 'title', 'body', 'owner', 'categories', 'created', 'updated']
+        fields = ['id', 'title', 'body', 'owner', 'categories', 'comments', 'created', 'updated']
 
+class CommentSerializer(serializers.ModelSerializer):
+    owner = serializers.ReadOnlyField(source='owner.username')
+
+    class Meta:
+        model = Comment
+        fields = ['id', 'body', 'owner', 'post', 'created', 'updated']
